@@ -3,25 +3,24 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-public class SimpleCalculator {
-	
+
+public class SimpleCalculator {  // need to sort buttons and clear screen when starting a new problem
     JTextArea calcDisplay;
-    ArrayList<JButton> buttonList = new ArrayList<JButton>();
-    String[] buttons = {"7", "8", "9", "/", 
-    					   "4", "5", "6", "*",
-    					   "1", "2", "3", "-",
-    					   "0", "C", "=", "+"};
+    ArrayList<JButton> numList = new ArrayList<JButton>();
+    ArrayList<JButton> opList = new ArrayList<JButton>();
+    String[] numbers = {"7","8","9","4","5","6","1","2","3","0"};
+    String[] operators = {"/","*","-","+"};
     
-    public int firstNumber = 0;
-	public int secondNumber = 0;
-	public int answer = 0;
-	public String operator = "";
+    int firstNumber;
+    int secondNumber;
+    String operator;
 	
     
-    public static void main(String[] args){
+    public static void main(String[] args){	
     	SimpleCalculator calc = new SimpleCalculator();
     	calc.gui();
     }
+    
     
     public void gui(){
     	JFrame frame = new JFrame("Simple Calculator");
@@ -38,83 +37,85 @@ public class SimpleCalculator {
     	background.add(BorderLayout.CENTER, panel);
     	background.add(BorderLayout.NORTH, calcDisplay);
     	
-    	for(int i=0; i<buttons.length; i++){
-    		JButton button = new JButton(buttons[i]);
-    		buttonList.add(button);
-    		button.addActionListener(new MyButtonListener());
-    		panel.add(button);
+    	for(int x=0; x<numbers.length; x++){
+    		JButton numButton = new JButton(numbers[x]);
+    		numList.add(numButton);
+    		numButton.addActionListener(new MyNumberListener());
+    		panel.add(numButton);
     	}
     	
-		frame.getContentPane().add(background);
+    	for(int y=0; y<operators.length; y++){
+    		JButton opButton = new JButton(operators[y]);
+    		opButton.addActionListener(new MyOperatorListener());
+    		opList.add(opButton);
+    		panel.add(opButton);
+    	}
+    	
+    	JButton clear = new JButton("C");
+    	clear.addActionListener(new MyClearListener());
+    	panel.add(clear);
+    	JButton equals = new JButton("=");
+    	equals.addActionListener(new MyEqualsListener());
+    	panel.add(equals);
+    	
+    	frame.getContentPane().add(background);
     	frame.setSize(250,400);
     	frame.setResizable(false);
     	frame.setVisible(true);
     }
-    class MyButtonListener implements ActionListener {
-    	
-    	public void actionPerformed(ActionEvent e){ // there's gotta be a better way to do this
-    		
+    
+    
+    class MyNumberListener implements ActionListener {
+    	public void actionPerformed(ActionEvent e){ 
     		Object source = e.getSource();
     		
-    		if (source == buttonList.get(0)){
-    			calcDisplay.append("7");
-    		} else if (source == buttonList.get(1)){
-    			calcDisplay.append("8");
-    		} else if (source == buttonList.get(2)){
-    			calcDisplay.append("9");
-    		} else if (source == buttonList.get(3)){ // divide
-    			operator = "/";
-    			firstNumber = Integer.parseInt(calcDisplay.getText());
-    			calcDisplay.setText("");
-    		} else if (source == buttonList.get(4)){
-    			calcDisplay.append("4");
-    		} else if (source == buttonList.get(5)){
-    			calcDisplay.append("5");
-    		} else if (source == buttonList.get(6)){
-    			calcDisplay.append("6");
-    		} else if (source == buttonList.get(7)){ // multiply
-    			firstNumber = Integer.parseInt(calcDisplay.getText());
-    			operator = "*";
-    			calcDisplay.setText("");
-    		} else if (source == buttonList.get(8)){
-    			calcDisplay.append("1");
-    		} else if (source == buttonList.get(9)){
-    			calcDisplay.append("2");
-    		} else if (source == buttonList.get(10)){
-    			calcDisplay.append("3");
-    		} else if (source == buttonList.get(11)){ // subtract
-    			firstNumber = Integer.parseInt(calcDisplay.getText());
-    			operator = "-";
-    			calcDisplay.setText("");
-    		} else if (source == buttonList.get(12)){
-    			calcDisplay.append("0");
-    		} else if (source == buttonList.get(13)){ // clear
-    			firstNumber = 0;
-    			secondNumber = 0;
-    			answer = 0;
-    			operator = "";
-    			calcDisplay.setText("");
-    		} else if (source == buttonList.get(14)){ // equals
-    			secondNumber = Integer.parseInt(calcDisplay.getText());
-    			if (operator == "/"){
-    				answer = firstNumber/secondNumber;
-    				calcDisplay.setText(String.valueOf(answer));
-    			} else if (operator == "*"){
-    				answer = firstNumber*secondNumber;
-    				calcDisplay.setText(String.valueOf(answer));
-    			} else if (operator == "-"){
-    				answer = firstNumber-secondNumber;
-    				calcDisplay.setText(String.valueOf(answer));
-    			} else if (operator == "+"){
-    				answer = firstNumber+secondNumber;
-    				calcDisplay.setText(String.valueOf(answer));
-    			}
-    			
-    		} else if (source == buttonList.get(15)){ // add
-    			firstNumber = Integer.parseInt(calcDisplay.getText());
-    			operator = "+";
-    			calcDisplay.setText("");
+    		for(int i=0; i<numbers.length; i++){
+    		    if (source == numList.get(i)){
+    		         calcDisplay.append(numbers[i]);
+    		   }
     		}
+    	}
+    }
+    
+    
+    class MyOperatorListener implements ActionListener {
+    	public void actionPerformed(ActionEvent e){
+    		Object source = e.getSource();
+    		
+    		for(int i=0;i<operators.length; i++){
+	    		if (source == opList.get(i)){
+    				firstNumber = Integer.parseInt(calcDisplay.getText());
+	    			operator = operators[i];
+	    			calcDisplay.setText("");
+	    		}
+    		}
+    	}
+    }
+    
+    
+    class MyClearListener implements ActionListener {
+    	public void actionPerformed(ActionEvent e){
+    		firstNumber = 0;
+    		secondNumber = 0;
+    		operator = "";
+    		calcDisplay.setText("");
+    	}
+    }
+    
+    
+    class MyEqualsListener implements ActionListener {
+    	public void actionPerformed(ActionEvent e){
+    		secondNumber = Integer.parseInt(calcDisplay.getText());
+    		
+			if (operator == "/"){
+				calcDisplay.setText(String.valueOf(firstNumber/secondNumber));
+			} else if (operator == "*"){
+				calcDisplay.setText(String.valueOf(firstNumber*secondNumber));
+			} else if (operator == "-"){
+				calcDisplay.setText(String.valueOf(firstNumber-secondNumber));
+			} else if (operator == "+"){
+				calcDisplay.setText(String.valueOf(firstNumber+secondNumber));
+			}
     	}
     }
 }
