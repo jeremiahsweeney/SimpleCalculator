@@ -4,7 +4,7 @@ import java.awt.event.*;
 import java.util.*;
 
 
-public class SimpleCalculator {  // need to sort buttons and clear screen when starting a new problem
+public class SimpleCalculator {  // need to sort buttons
     JTextArea calcDisplay;
     ArrayList<JButton> numList = new ArrayList<JButton>();
     ArrayList<JButton> opList = new ArrayList<JButton>();
@@ -14,7 +14,7 @@ public class SimpleCalculator {  // need to sort buttons and clear screen when s
     int firstNumber;
     int secondNumber;
     String operator;
-	
+    Boolean newProblem = false;
     
     public static void main(String[] args){	
     	SimpleCalculator calc = new SimpleCalculator();
@@ -64,23 +64,35 @@ public class SimpleCalculator {  // need to sort buttons and clear screen when s
     	frame.setVisible(true);
     }
     
-    
+    public void clear(){
+    		firstNumber = 0;
+    		secondNumber = 0;
+    		operator = "";
+    		newProblem = false;
+    		calcDisplay.setText("");
+    		
+    }
+    	
     class MyNumberListener implements ActionListener {
     	public void actionPerformed(ActionEvent e){ 
     		Object source = e.getSource();
     		
+    		if (newProblem) {
+    			clear();
+    		}
+    		
     		for(int i=0; i<numbers.length; i++){
     		    if (source == numList.get(i)){
-    		         calcDisplay.append(numbers[i]);
-    		   }
-    		}
+    		    	calcDisplay.append(numbers[i]);
+    		    }
+			}
     	}
     }
-    
     
     class MyOperatorListener implements ActionListener {
     	public void actionPerformed(ActionEvent e){
     		Object source = e.getSource();
+    		newProblem = false; 
     		
     		for(int i=0;i<operators.length; i++){
 	    		if (source == opList.get(i)){
@@ -95,10 +107,7 @@ public class SimpleCalculator {  // need to sort buttons and clear screen when s
     
     class MyClearListener implements ActionListener {
     	public void actionPerformed(ActionEvent e){
-    		firstNumber = 0;
-    		secondNumber = 0;
-    		operator = "";
-    		calcDisplay.setText("");
+    		clear();
     	}
     }
     
@@ -106,6 +115,7 @@ public class SimpleCalculator {  // need to sort buttons and clear screen when s
     class MyEqualsListener implements ActionListener {
     	public void actionPerformed(ActionEvent e){
     		secondNumber = Integer.parseInt(calcDisplay.getText());
+    		newProblem = true;
     		
 			if (operator == "/"){
 				calcDisplay.setText(String.valueOf(firstNumber/secondNumber));
